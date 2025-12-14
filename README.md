@@ -63,6 +63,36 @@ comfyui status
 comfyui log
 ```
 
+### Sweet Tea Studio Control
+
+```bash
+# Restart Sweet Tea Studio (quick command)
+restart-sweet-tea
+
+# Or use the full control script
+sweet-tea restart
+
+# Check status
+sweet-tea status
+
+# Stop/start individually
+sweet-tea stop
+sweet-tea start
+
+# View logs
+sweet-tea log
+
+# Update to latest version
+sweet-tea update
+```
+
+### R2 Sync
+
+```bash
+# Sync all data to R2 (includes custom_nodes, user, sweet_tea, output, models, etc.)
+sync-up
+```
+
 ### File Management
 
 - **Web Interface**: Access FileBrowser at `http://<pod-ip>:8888` (Default: admin/admin)

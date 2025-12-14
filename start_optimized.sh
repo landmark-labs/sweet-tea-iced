@@ -447,6 +447,12 @@ create_downloader_alias() {
     cp /scripts/sync_up.sh /usr/local/bin/sync-up
     chmod +x /usr/local/bin/sync-up
     echo "Created 'sync-up' alias"
+
+    # Sweet Tea Studio control script
+    cp /scripts/sweet_tea_control.sh /usr/local/bin/sweet-tea
+    chmod +x /usr/local/bin/sweet-tea
+    ln -sf /usr/local/bin/sweet-tea /usr/local/bin/restart-sweet-tea
+    echo "Created 'sweet-tea' and 'restart-sweet-tea' commands"
 }
 
 # Setup tools
