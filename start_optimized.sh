@@ -511,27 +511,29 @@ check_for_updates() {
 }
 
 # Sync from R2
-# 1. Critical components (foreground) - MUST complete before ComfyUI starts
+# 1. Critical components (foreground) - MUST complete before starting services
+# This syncs: scripts, custom_nodes, user, sweet_tea folders
 r2_sync_critical
+
+# =============================================================================
+# START SWEET TEA STUDIO
+# Start after critical sync (which brings sweet_tea config) but before heavy ops
+# =============================================================================
+echo "[startup] Starting Sweet Tea Studio (accessible while heavy assets sync)..."
+if [ -f /scripts/setup_sweet_tea_studio.sh ]; then
+    bash /scripts/setup_sweet_tea_studio.sh > /workspace/logs/sweet-tea-setup.log 2>&1 &
+    SWEET_TEA_SETUP_PID=$!
+    echo "[startup] Sweet Tea Studio setup running in background (PID: $SWEET_TEA_SETUP_PID)"
+    echo "[startup] Setup log: /workspace/logs/sweet-tea-setup.log"
+else
+    echo "[startup] WARNING: Sweet Tea Studio setup script not found at /scripts/setup_sweet_tea_studio.sh"
+fi
 
 # 2. Heavy assets (background) - Can load while ComfyUI is running
 r2_sync_assets_async
 
 # 3. Fix custom node environment (depends on critical sync)
 fix_custom_nodes_env
-
-# =============================================================================
-# START SWEET TEA STUDIO EARLY
-# Start before SageAttention compilation so users can work while waiting
-# =============================================================================
-echo "[startup] Starting Sweet Tea Studio (accessible while ComfyUI initializes)..."
-if [ -f /scripts/setup_sweet_tea_studio.sh ]; then
-    bash /scripts/setup_sweet_tea_studio.sh &
-    SWEET_TEA_SETUP_PID=$!
-    echo "[startup] Sweet Tea Studio setup running in background (PID: $SWEET_TEA_SETUP_PID)"
-else
-    echo "[startup] WARNING: Sweet Tea Studio setup script not found"
-fi
 
 # 4. Compile SageAttention (if needed) - Runs while assets download
 # Setup SageAttention
