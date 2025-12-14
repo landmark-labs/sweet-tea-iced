@@ -121,11 +121,8 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
-    # Add NodeSource for Node.js 20.x (required for Sweet Tea Studio)
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    nodejs \
     ca-certificates \
     curl wget git git-lfs \
     nano vim less \
@@ -155,6 +152,12 @@ RUN apt-get update && \
     google-perftools \
     python3.12 python3.12-venv python3.12-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20.x (required for Sweet Tea Studio)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/* && \
+    node --version && npm --version
 
 # Install FileBrowser
 RUN FB_VERSION=2.30.0 && \
