@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode
+*.md
+task.md
+implementation_plan.md
+walkthrough.md
+build_context
+test_workspace
+*.log
+*.tmp

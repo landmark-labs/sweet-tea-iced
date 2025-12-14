@@ -1,0 +1,27 @@
+{
+    "security.workspace.trust.enabled": false,
+    "workbench.startupEditor": "none",
+    "files.watcherExclude": {
+        "**/models/**": true,
+        "**/output/**": true,
+        "**/.git/**": true,
+        "**/node_modules/**": true
+    },
+    "search.exclude": {
+        "**/models/**": true,
+        "**/output/**": true
+    },
+    "files.associations": {
+        "*.safetensors": "binary",
+        "*.ckpt": "binary",
+        "*.pt": "binary"
+    },
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.scrollback": 10000,
+    "editor.formatOnSave": true,
+    "python.defaultInterpreterPath": "/opt/ComfyUI/venv/bin/python",
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.iconTheme": "material-icon-theme"
+}
