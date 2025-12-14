@@ -95,7 +95,7 @@ sync-up
 
 ### File Management
 
-- **Web Interface**: Access FileBrowser at `http://<pod-ip>:8888` (Default: admin/admin)
+- **Web Interface**: Access FileBrowser at `http://<pod-ip>:8888` (Default: admin/filebrowser)
 - **Download Outputs**:
   ```bash
   # Zip and download last 50 images

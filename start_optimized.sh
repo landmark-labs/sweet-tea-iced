@@ -278,7 +278,7 @@ setup_filebrowser() {
     rm -f "${DB_PATH}"
 
     filebrowser config init --database "${DB_PATH}"
-    filebrowser users add admin admin --database "${DB_PATH}"
+    filebrowser users add admin filebrowser --database "${DB_PATH}"
 
     nohup filebrowser \
         --database "${DB_PATH}" \
@@ -286,7 +286,7 @@ setup_filebrowser() {
         --port 8889 \
         --root / > "${LOG_PATH}" 2>&1 &
 
-    echo "FileBrowser started (access via port 8888, admin/admin)"
+    echo "FileBrowser started (access via port 8888, admin/filebrowser)"
 }
 
 # Create download helper
