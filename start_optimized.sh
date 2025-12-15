@@ -518,13 +518,12 @@ r2_sync_critical
 # =============================================================================
 # START SWEET TEA STUDIO
 # Start after critical sync (which brings sweet_tea config) but before heavy ops
+# Run in foreground to ensure services are actually started before continuing
 # =============================================================================
-echo "[startup] Starting Sweet Tea Studio (accessible while heavy assets sync)..."
+echo "[startup] Starting Sweet Tea Studio..."
 if [ -f /scripts/setup_sweet_tea_studio.sh ]; then
-    bash /scripts/setup_sweet_tea_studio.sh > /workspace/logs/sweet-tea-setup.log 2>&1 &
-    SWEET_TEA_SETUP_PID=$!
-    echo "[startup] Sweet Tea Studio setup running in background (PID: $SWEET_TEA_SETUP_PID)"
-    echo "[startup] Setup log: /workspace/logs/sweet-tea-setup.log"
+    bash /scripts/setup_sweet_tea_studio.sh 2>&1 | tee /workspace/logs/sweet-tea-setup.log
+    echo "[startup] Sweet Tea Studio setup complete."
 else
     echo "[startup] WARNING: Sweet Tea Studio setup script not found at /scripts/setup_sweet_tea_studio.sh"
 fi
