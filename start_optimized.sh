@@ -119,16 +119,16 @@ r2_sync_assets_async() {
   local REMOTE="r2:${R2_BUCKET}${R2_PREFIX:+/${R2_PREFIX}}"
   local LOG="${R2_DOWN_LOG:-/workspace/logs/rclone_down.log}"
 
-  echo "[r2] Starting BACKGROUND sync (output, input, models)..."
+  echo "[r2] Starting BACKGROUND sync (output, input, models, vlm)..."
 
   # Ensure directories exist
-  for d in output input models; do
+  for d in output input models vlm; do
     mkdir -p "${LOCAL_ROOT}/${d}"
   done
 
   (
-    echo "[r2] Sync-down (copy) from ${REMOTE}/{output,input,models} -> ${LOCAL_ROOT}/..."
-    for p in output input models; do
+    echo "[r2] Sync-down (copy) from ${REMOTE}/{output,input,models,vlm} -> ${LOCAL_ROOT}/..."
+    for p in output input models vlm; do
       echo "[r2] copy ${REMOTE}/${p} -> ${LOCAL_ROOT}/${p}"
       set +e
       rclone copy \
@@ -157,7 +157,7 @@ r2_sync_up_sync() {
   local REMOTE="r2:${R2_BUCKET}${R2_PREFIX:+/${R2_PREFIX}}"
   local EXCLUDES=( "/**/.git/**" "/**/__pycache__/**" "/**/outputs/**" "/**/temp/**" "/**/*.tmp" "/**/*.part" )
 
-  for p in scripts custom_nodes user sweet_tea output input models; do
+  for p in scripts custom_nodes user sweet_tea output input models vlm; do
     rclone sync \
       "${LOCAL_ROOT}/${p}" "${REMOTE}/${p}" \
       $(r2_common_args) \
@@ -515,9 +515,13 @@ check_for_updates() {
 # This syncs: scripts, custom_nodes, user, sweet_tea folders
 r2_sync_critical
 
+# 2. Heavy assets (background) - Start immediately after critical sync
+# Can load in background while other services start
+r2_sync_assets_async
+
 # =============================================================================
 # START SWEET TEA STUDIO
-# Start after critical sync (which brings sweet_tea config) but before heavy ops
+# Start after critical sync (which brings sweet_tea config)
 # Run in foreground to ensure services are actually started before continuing
 # =============================================================================
 echo "[startup] Starting Sweet Tea Studio..."
@@ -527,9 +531,6 @@ if [ -f /scripts/setup_sweet_tea_studio.sh ]; then
 else
     echo "[startup] WARNING: Sweet Tea Studio setup script not found at /scripts/setup_sweet_tea_studio.sh"
 fi
-
-# 2. Heavy assets (background) - Can load while ComfyUI is running
-r2_sync_assets_async
 
 # 3. Fix custom node environment (depends on critical sync)
 fix_custom_nodes_env

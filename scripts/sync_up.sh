@@ -20,7 +20,7 @@ REMOTE="r2:${R2_BUCKET}${R2_PREFIX:+/${R2_PREFIX}}"
 EXCLUDES=( "/**/.git/**" "/**/__pycache__/**" "/**/outputs/**" "/**/temp/**" "/**/*.tmp" "/**/*.part" )
 
 # Directories to sync
-PATHS=(custom_nodes user sweet_tea output scripts input models)
+PATHS=(custom_nodes user sweet_tea output scripts input models vlm)
 
 echo "[r2] Starting optimized sync-up to ${REMOTE}..."
 echo "[r2] Local Root: ${LOCAL_ROOT}"
