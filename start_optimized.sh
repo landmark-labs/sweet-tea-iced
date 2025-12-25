@@ -126,14 +126,16 @@ r2_sync_assets_async() {
     mkdir -p "${LOCAL_ROOT}/${d}"
   done
 
-  (
-    echo "[r2] Sync-down (copy) from ${REMOTE}/{output,input,models,vlm} -> ${LOCAL_ROOT}/..."
+  # Run at lowest priority (nice -n 19 = lowest CPU, ionice -c 3 = idle IO class)
+  # This lets other startup operations take precedence, but goes full speed when idle
+  nice -n 19 ionice -c 3 bash -c '
+    echo "[r2] Sync-down (copy) from '"${REMOTE}"'/{output,input,models,vlm} -> '"${LOCAL_ROOT}"'/..."
     for p in output input models vlm; do
-      echo "[r2] copy ${REMOTE}/${p} -> ${LOCAL_ROOT}/${p}"
+      echo "[r2] copy '"${REMOTE}"'/${p} -> '"${LOCAL_ROOT}"'/${p}"
       set +e
       rclone copy \
-        "${REMOTE}/${p}" "${LOCAL_ROOT}/${p}" \
-        $(r2_common_args) \
+        "'"${REMOTE}"'/${p}" "'"${LOCAL_ROOT}"'/${p}" \
+        '"$(r2_common_args)"' \
         --order-by size,ascending \
         --no-traverse \
         --create-empty-src-dirs \
@@ -145,7 +147,7 @@ r2_sync_assets_async() {
       fi
     done
     echo "[r2] Background sync-down finished."
-  ) 2>&1 | grep --line-buffered -v "Failed to read mtime" >> "${LOG}" &
+  ' 2>&1 | grep --line-buffered -v "Failed to read mtime" >> "${LOG}" &
   SYNC_DOWN_PID=$!
   export SYNC_DOWN_PID
   echo "[r2] Background pull started (pid=${SYNC_DOWN_PID}); tail -f ${LOG} to watch progress."
