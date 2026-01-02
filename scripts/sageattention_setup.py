@@ -37,7 +37,7 @@ def initialize_sageattention3():
                 return original_sdpa(q, k, v, attn_mask=attn_mask, dropout_p=dropout_p, is_causal=is_causal, scale=scale)
 
             # Lazy import: this is where CUDA kernels may compile
-            from sageattention3 import sageattn_fp4
+            from sageattn3 import sageattn_fp4
             _used += 1
             return sageattn_fp4(q, k, v, is_causal=is_causal, scale=scale)
         except Exception as e:

@@ -240,7 +240,7 @@ install_or_verify_sageattention() {
         
         while [ $attempt -le $max_attempts ]; do
             echo "Cloning $url (attempt $attempt/$max_attempts)..."
-            if git clone --depth 1 "$url" "$dest" 2>&1; then
+            if git clone "$url" "$dest" 2>&1; then
                 echo "✅ Clone successful: $dest"
                 return 0
             fi
@@ -277,7 +277,7 @@ install_or_verify_sageattention() {
     pip3 install --no-build-isolation .
 
     echo "Verifying SageAttention3 installation..."
-    $VENV_PYTHON -c "import torch, triton; from sageattention3 import sageattn_fp4; print('✅ SageAttention3 compiled and installed successfully')"
+    $VENV_PYTHON -c "import torch, triton; from sageattn3 import sageattn_fp4; print('✅ SageAttention3 compiled and installed successfully')"
     
     cd /
     rm -rf /tmp/SageAttention
