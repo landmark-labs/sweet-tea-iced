@@ -4,7 +4,7 @@ set -e
 # Configuration
 DOCKER_USERNAME=${DOCKER_USERNAME:-"jkotieno"}
 IMAGE_NAME="comfyui-sweet-tea-cu128"
-VERSION="1.0.0"
+VERSION="1.1.0-sage3"
 PLATFORMS="linux/amd64"
 
 echo "Building optimized ComfyUI image..."

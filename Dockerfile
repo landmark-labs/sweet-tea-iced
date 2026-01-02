@@ -12,15 +12,15 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     git curl nodejs npm \
-    python3.12 python3.12-venv python3.12-dev && \
+    python3.13 python3.13-venv python3.13-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /root/.cache
 
-# Configure Python 3.12 as default
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
-    update-alternatives --set python3 /usr/bin/python3.12 && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
-    python3.12 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+# Configure Python 3.13 as default (required for SageAttention3)
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13 1 && \
+    update-alternatives --set python3 /usr/bin/python3.13 && \
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13 && \
+    python3.13 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Install common build tools and libraries
 RUN apt-get update && \
@@ -150,7 +150,7 @@ RUN apt-get update && \
     libxcb1-dev \
     openssl libssl-dev \
     google-perftools \
-    python3.12 python3.12-venv python3.12-dev \
+    python3.13 python3.13-venv python3.13-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20.x (required for Sweet Tea Studio)
@@ -174,11 +174,11 @@ RUN CS_VERSION=4.96.4 && \
     dpkg -i "code-server_${CS_VERSION}_${ARCH}.deb" && \
     rm "code-server_${CS_VERSION}_${ARCH}.deb"
 
-# Configure Python
-RUN ln -sf /usr/bin/python3.12 /usr/local/bin/python3 && \
-    ln -sf /usr/bin/python3.12 /usr/local/bin/python && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
-    python3.12 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+# Configure Python (3.13 required for SageAttention3)
+RUN ln -sf /usr/bin/python3.13 /usr/local/bin/python3 && \
+    ln -sf /usr/bin/python3.13 /usr/local/bin/python && \
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13 && \
+    python3.13 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Create user and directories
 RUN useradd -m -s /bin/bash -G sudo comfy && \
@@ -213,7 +213,7 @@ ENV LD_PRELOAD=libtcmalloc_minimal.so.4
 ENV CC=gcc
 ENV CXX=g++
 
-ARG RELEASE=2.0.0
+ARG RELEASE=2.1.0-sage3
 ENV TEMPLATE_VERSION=${RELEASE} \
     COMFYUI_PATH=/opt/ComfyUI \
     VENV_PATH=/opt/ComfyUI/venv \

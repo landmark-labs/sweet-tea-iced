@@ -210,17 +210,17 @@ generate_ssh_host_keys() {
     ssh-keygen -A
 }
 
-# Compile SageAttention on first run
+# Compile SageAttention3 on first run (Blackwell/experimental)
 install_or_verify_sageattention() {
     local VENV_PYTHON="/opt/ComfyUI/venv/bin/python3"
-    local DONE_FILE="/opt/ComfyUI/.sageattention_installed"
+    local DONE_FILE="/opt/ComfyUI/.sageattention3_installed"
 
     if [ -f "$DONE_FILE" ]; then
-        echo "✅ SageAttention is already compiled. Skipping."
+        echo "✅ SageAttention3 is already compiled. Skipping."
         return
     fi
 
-    echo "🚀 First run detected. Compiling SageAttention..."
+    echo "🚀 First run detected. Compiling SageAttention3 (Blackwell)..."
     
     source /opt/ComfyUI/venv/bin/activate
     
@@ -231,24 +231,24 @@ install_or_verify_sageattention() {
 
     rm -rf /tmp/SageAttention
 
-    echo "Cloning and building SageAttention..."
+    echo "Cloning and building SageAttention3..."
     cd /tmp
     git clone https://github.com/thu-ml/SageAttention.git
-    cd SageAttention
+    cd SageAttention/sageattention3_blackwell
 
-    echo "Compiling kernels..."
+    echo "Compiling SageAttention3 kernels..."
     $VENV_PYTHON setup.py build_ext --inplace
-    pip3 install --no-build-isolation --no-deps .
+    pip3 install --no-build-isolation .
 
-    echo "Verifying installation..."
-    $VENV_PYTHON -c "import torch, triton, sageattention; print('✅ SageAttention compiled and installed successfully')"
+    echo "Verifying SageAttention3 installation..."
+    $VENV_PYTHON -c "import torch, triton; from sageattention3 import sageattn_fp4; print('✅ SageAttention3 compiled and installed successfully')"
     
     cd /
     rm -rf /tmp/SageAttention
     touch "$DONE_FILE"
     
     deactivate
-    echo "SageAttention setup complete."
+    echo "SageAttention3 setup complete."
 }
 
 # Setup Code Server
