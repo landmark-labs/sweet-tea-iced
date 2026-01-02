@@ -231,12 +231,48 @@ install_or_verify_sageattention() {
 
     rm -rf /tmp/SageAttention
 
-    echo "Cloning and building SageAttention3..."
+    # Helper function for git clone with retries
+    git_clone_with_retry() {
+        local url="$1"
+        local dest="$2"
+        local max_attempts=5
+        local attempt=1
+        
+        while [ $attempt -le $max_attempts ]; do
+            echo "Cloning $url (attempt $attempt/$max_attempts)..."
+            if git clone --depth 1 "$url" "$dest" 2>&1; then
+                echo "✅ Clone successful: $dest"
+                return 0
+            fi
+            echo "⚠️ Clone failed, retrying in 5 seconds..."
+            rm -rf "$dest"
+            sleep 5
+            attempt=$((attempt + 1))
+        done
+        
+        echo "❌ Failed to clone $url after $max_attempts attempts"
+        return 1
+    }
+
+    echo "Cloning SageAttention3 repository..."
     cd /tmp
-    git clone https://github.com/thu-ml/SageAttention.git
+    git_clone_with_retry "https://github.com/thu-ml/SageAttention.git" "SageAttention" || {
+        echo "❌ Failed to clone SageAttention. Skipping SageAttention3 setup."
+        deactivate
+        return 1
+    }
+    
     cd SageAttention/sageattention3_blackwell
 
-    echo "Compiling SageAttention3 kernels..."
+    # Pre-clone cutlass dependency with retries (setup.py tries to clone this)
+    echo "Pre-cloning NVIDIA cutlass dependency..."
+    git_clone_with_retry "https://github.com/NVIDIA/cutlass.git" "csrc/cutlass" || {
+        echo "❌ Failed to clone cutlass. Skipping SageAttention3 setup."
+        deactivate
+        return 1
+    }
+
+    echo "Compiling SageAttention3 kernels (this may take a while)..."
     $VENV_PYTHON setup.py build_ext --inplace
     pip3 install --no-build-isolation .
 
