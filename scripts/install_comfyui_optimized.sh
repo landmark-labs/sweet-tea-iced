@@ -27,7 +27,7 @@ else
 fi
 
 # Create and activate venv
-python3.12 -m venv venv
+python3.13 -m venv venv
 source venv/bin/activate
 
 PYBIN="$(command -v python)"
