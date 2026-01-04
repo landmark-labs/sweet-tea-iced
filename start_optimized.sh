@@ -262,7 +262,12 @@ install_or_verify_sageattention() {
         return 1
     }
     
-    cd SageAttention/sageattention3_blackwell
+    # Install the main sageattention package first
+    echo "Installing sageattention python package..."
+    cd SageAttention
+    pip3 install .
+    
+    cd sageattention3_blackwell
 
     # Pre-clone cutlass dependency with retries (setup.py tries to clone this)
     echo "Pre-cloning NVIDIA cutlass dependency..."
