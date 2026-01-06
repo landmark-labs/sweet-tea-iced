@@ -262,12 +262,7 @@ install_or_verify_sageattention() {
         return 1
     }
     
-    # Install the main sageattention package first
-    echo "Installing sageattention python package..."
-    cd SageAttention
-    pip3 install .
-    
-    cd sageattention3_blackwell
+    cd SageAttention/sageattention3_blackwell
 
     # Pre-clone cutlass dependency with retries (setup.py tries to clone this)
     echo "Pre-cloning NVIDIA cutlass dependency..."
@@ -281,8 +276,13 @@ install_or_verify_sageattention() {
     $VENV_PYTHON setup.py build_ext --inplace
     pip3 install --no-build-isolation .
 
+    # Install the main sageattention package (required for imports)
+    echo "Installing sageattention python package..."
+    cd ..
+    pip3 install --no-build-isolation .
+
     echo "Verifying SageAttention3 installation..."
-    $VENV_PYTHON -c "import torch, triton; from sageattn3 import sageattn3_blackwell; print('✅ SageAttention3 compiled and installed successfully')"
+    $VENV_PYTHON -c "import torch, triton, sageattention; from sageattn3 import sageattn3_blackwell; print('✅ SageAttention3 compiled and installed successfully')"
     
     cd /
     rm -rf /tmp/SageAttention
